@@ -1,1 +1,1 @@
-web: gunicorn wsgi:T2-Taller-Integracion
+web: gunicorn app:t2-taller-integracion
