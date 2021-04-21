@@ -1,1 +1,1 @@
-web: gunicorn app:t2-taller-integracion
+web: gunicorn app:app
