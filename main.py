@@ -72,12 +72,14 @@ class Video(Resource):
         db.session.commit()
         return result, 200
 
-
     def delete(self, video_id):
         return "", 204
 
+class Home(Resource):
+    def get(self):
+        return "Welcome to my API"
 
-
+api.add_resource(Home, "/")
 api.add_resource(Video, "/video/<int:video_id>")
 
 if __name__ == "__main__":
