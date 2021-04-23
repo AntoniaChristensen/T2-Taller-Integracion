@@ -87,7 +87,7 @@ class ArtistList(Resource):
         args = artist_post_args.parse_args()
         artist_id = b64encode(args['name'].encode()).decode('utf-8')
         if len(artist_id) > 22:
-            artist_id = artist_id[0:21]
+            artist_id = artist_id[0:22]
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if result:
             abort(409, message="Artist id taken...")
@@ -152,7 +152,7 @@ class AlbumArtist(Resource):
         to_encode = args['name'] + ":" + artist_id
         album_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(album_id) > 22:
-            album_id = album_id[0:21]
+            album_id = album_id[0:22]
         result = AlbumModel.query.filter_by(id=album_id).first()
         if result:
             abort(409, message="Album id taken...")
@@ -243,7 +243,7 @@ class TrackAlbum(Resource):
         to_encode = args['name'] + ":" + album_id
         track_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(track_id) > 22:
-            track_id = track_id[0:21]
+            track_id = track_id[0:22]
         result = TrackModel.query.filter_by(id=track_id).first()
         if result:
             abort(409, message="Track id taken...")
