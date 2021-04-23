@@ -159,7 +159,7 @@ class AlbumArtist(Resource):
     def get(self, artist_id):
         artist_exists = ArtistModel.query.filter_by(id=artist_id).first()
         if not artist_exists:
-            abort(422, message="Artist doesn't exist")
+            abort(404, message="Artist doesn't exist")
         result = AlbumModel.query.filter_by(artist_id=artist_id).all()
         if not result:
             abort(404, message="No albums for that artist")
@@ -252,7 +252,7 @@ class TrackArtist(Resource):
     def get(self, artist_id):
         artist_exists = ArtistModel.query.filter_by(id=artist_id).first()
         if not artist_exists:
-            abort(422, message="Artist doesn't exist")
+            abort(404, message="Artist doesn't exist")
         result = TrackModel.query.filter_by(artist_id=artist_id).all()
         if not result:
             abort(404, message="No tracks for that artist")
@@ -263,7 +263,7 @@ class TrackAlbum(Resource):
     def get(self, album_id):
         album_exists = AlbumModel.query.filter_by(id=album_id).first()
         if not album_exists:
-            abort(422, message="Album doesn't exist")
+            abort(404, message="Album doesn't exist")
         result = TrackModel.query.filter_by(album_id=album_id).all()
         if not result:
             abort(404, message="No tracks for that album")
