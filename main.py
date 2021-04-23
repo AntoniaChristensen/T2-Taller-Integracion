@@ -213,7 +213,7 @@ class TrackList(Resource):
         return result
 
 class TrackArtist(Resource):
-    @marshal_with(album_fields)
+    @marshal_with(track_fields)
     def get(self, artist_id):
         artist_exists = ArtistModel.query.filter_by(id=artist_id).first()
         if not artist_exists:
@@ -239,7 +239,7 @@ class TrackAlbum(Resource):
         album_exists = AlbumModel.query.filter_by(id=album_id).first()
         if not album_exists:
             abort(422, message="Album doesn't exist")
-        args = tracks_post_args.parse_args()
+        args = track_post_args.parse_args()
         to_encode = args['name'] + ":" + album_id
         track_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(track_id) > 22:
@@ -247,11 +247,10 @@ class TrackAlbum(Resource):
         result = TrackModel.query.filter_by(id=track_id).first()
         if result:
             abort(409, message="Track id taken...")
-        
+        artist_id = album_exists.artist_id
         artist_url = HOST_URL + "artists/" + artist_id 
         album_url = HOST_URL + "albums/" + album_id
         track_url = HOST_URL + "tracks/" + track_id
-        artist_id = album_exists.artist_id
         track = TrackModel(id=track_id, album_id=album_id, artist_id=artist_id, name=args['name'], duration=args['duration'],times_played= 0, artist= artist_url,album= album_url,self_url=track_url)
         db.session.add(track)
         db.session.commit()
@@ -281,7 +280,7 @@ api.add_resource(Album, "/albums/<string:album_id>")
 api.add_resource(AlbumList, "/albums")
 api.add_resource(AlbumArtist, "/artists/<string:artist_id>/albums", "/artists/<string:artist_id>/albums/play")
 api.add_resource(TrackArtist, "/artists/<string:artist_id>/tracks")
-api.add_resource(Track , "/tracks/<string:track_id>", "/tracks/<string:track_id>/play")
+api.add_resource(Track, "/tracks/<string:track_id>", "/tracks/<string:track_id>/play")
 api.add_resource(TrackList, "/tracks")
 api.add_resource(TrackAlbum, "/albums/<string:album_id>/tracks", "/albums/<string:album_id>/tracks/play")
 
