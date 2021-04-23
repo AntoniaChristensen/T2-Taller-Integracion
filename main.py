@@ -72,6 +72,19 @@ class Artist(Resource):
         return result
     
     def delete(self, artist_id):
+        result = ArtistModel.query.filter_by(id=artist_id).first()
+        if not result:
+            abort(404, message="Could not find artist with that id...")
+        albums = AlbumModel.query.filter_by(artist_id=artist_id).all()
+        if albums:
+            for album in albums:
+                db.session.delete(album)
+        songs = TrackModel.query.filter_by(artist_id=artist_id).all()
+        if songs:
+            for track in songs:
+                db.session.delete(track)        
+        db.session.delete(result)
+        db.session.commit()
         return "", 204
 
 class ArtistList(Resource):
@@ -121,7 +134,16 @@ class Album(Resource):
             abort(404, message="Could not find album with that id...")
         return result
     
-    def delete(self, artist_id):
+    def delete(self, album_id):
+        result = AlbumModel.query.filter_by(id=album_id).first()
+        if not result:
+            abort(404, message="Could not find album with that id...")
+        tracks = TrackModel.query.filter_by(album_id=album_id).all()
+        if tracks:
+            for song in tracks:
+                db.session.delete(song)
+        db.session.delete(result)
+        db.session.commit()
         return "", 204
 
 class AlbumList(Resource):
@@ -210,6 +232,11 @@ class Track(Resource):
         return "", 200
     
     def delete(self, track_id):
+        track = TrackModel.query.filter_by(id=track_id).first()
+        if not track:
+            abort(404, message="Could not find track with that id...")
+        db.session.delete(track)
+        db.session.commit()
         return "", 204
 
 class TrackList(Resource):
