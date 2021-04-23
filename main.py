@@ -218,7 +218,7 @@ class TrackArtist(Resource):
         artist_exists = ArtistModel.query.filter_by(id=artist_id).first()
         if not artist_exists:
             abort(422, message="Artist doesn't exist")
-        result = TracksModel.query.filter_by(artist_id=artist_id).all()
+        result = TrackModel.query.filter_by(artist_id=artist_id).all()
         if not result:
             abort(404, message="No tracks for that artist")
         return result
