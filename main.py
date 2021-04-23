@@ -103,7 +103,7 @@ class ArtistList(Resource):
             artist_id = artist_id[0:22]
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if result:
-            abort(409, message="Artist id taken...")
+            return result, 409
         albums_url = HOST_URL + "artists/" + artist_id +"/albums"
         tracks_url = HOST_URL + "artists/" + artist_id +"/tracks"
         artist_url = HOST_URL + "artists/" + artist_id 
@@ -177,7 +177,7 @@ class AlbumArtist(Resource):
             album_id = album_id[0:22]
         result = AlbumModel.query.filter_by(id=album_id).first()
         if result:
-            abort(409, message="Album id taken...")
+            return result, 409
         
         artist_url = HOST_URL + "artists/" + artist_id 
         tracks_url = artist_url + "/tracks"
@@ -281,7 +281,7 @@ class TrackAlbum(Resource):
             track_id = track_id[0:22]
         result = TrackModel.query.filter_by(id=track_id).first()
         if result:
-            abort(409, message="Track id taken...")
+            return result, 409
         artist_id = album_exists.artist_id
         artist_url = HOST_URL + "artists/" + artist_id 
         album_url = HOST_URL + "albums/" + album_id
