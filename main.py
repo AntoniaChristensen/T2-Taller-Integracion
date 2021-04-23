@@ -201,15 +201,11 @@ class Track(Resource):
             abort(404, message="Could not find track with that id...")
         return result
     
-    def put(self, album_id):
-        album_exists = AlbumModel.query.filter_by(id=album_id).first()
-        if not album_exists:
-            abort(404, message="Album doesn't exist")
-        songs = TrackModel.query.filter_by(album_id=track_id).all()
-        if not songs:
-            abort(200, message="No songs in that album")
-        for track in songs:
-            track.times_played += 1
+    def put(self, track_id):
+        track_exists = TrackModel.query.filter_by(id=track_id).first()
+        if not track_exists:
+            abort(404, message="Track doesn't exist")
+        track_exists.times_played += 1
         db.session.commit()
         return "", 200
     
@@ -267,6 +263,18 @@ class TrackAlbum(Resource):
         db.session.add(track)
         db.session.commit()
         return track, 201
+    
+    def put(self, album_id):
+        album_exists = AlbumModel.query.filter_by(id=album_id).first()
+        if not album_exists:
+            abort(404, message="Album doesn't exist")
+        songs = TrackModel.query.filter_by(album_id=album_id).all()
+        if not songs:
+            abort(200, message="No songs in that album")
+        for track in songs:
+            track.times_played += 1
+        db.session.commit()
+        return "", 200
     
     
 
