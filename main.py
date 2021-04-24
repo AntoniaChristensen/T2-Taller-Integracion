@@ -68,13 +68,13 @@ class Artist(Resource):
     def get(self, artist_id):
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if not result:
-            abort(404, message="Could not find artist with that id...")
+            abort(404, message="Artist doesn't exist")
         return result
     
     def delete(self, artist_id):
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if not result:
-            abort(404, message="Could not find artist with that id...")
+            abort(404, message="Artist doesn't exist")
         albums = AlbumModel.query.filter_by(artist_id=artist_id).all()
         if albums:
             for album in albums:
@@ -92,7 +92,7 @@ class ArtistList(Resource):
     def get(self):
         result = ArtistModel.query.all()
         if not result:
-            abort(404, message="No artists")
+            return "", 200
         return result
     
     @marshal_with(artist_fields)
@@ -131,13 +131,13 @@ class Album(Resource):
     def get(self, album_id):
         result = AlbumModel.query.filter_by(id=album_id).first()
         if not result:
-            abort(404, message="Could not find album with that id...")
+            abort(404, message="Album doesn't exist")
         return result
     
     def delete(self, album_id):
         result = AlbumModel.query.filter_by(id=album_id).first()
         if not result:
-            abort(404, message="Could not find album with that id...")
+            abort(404, message="Album doesn't exist")
         tracks = TrackModel.query.filter_by(album_id=album_id).all()
         if tracks:
             for song in tracks:
@@ -151,7 +151,7 @@ class AlbumList(Resource):
     def get(self):
         result = AlbumModel.query.all()
         if not result:
-            abort(404, message="No albums")
+            return "", 200
         return result
 
 class AlbumArtist(Resource):
@@ -162,7 +162,7 @@ class AlbumArtist(Resource):
             abort(404, message="Artist doesn't exist")
         result = AlbumModel.query.filter_by(artist_id=artist_id).all()
         if not result:
-            abort(404, message="No albums for that artist")
+            return "", 200
         return result
 
     @marshal_with(album_fields)
@@ -178,7 +178,6 @@ class AlbumArtist(Resource):
         result = AlbumModel.query.filter_by(id=album_id).first()
         if result:
             return result, 409
-        
         artist_url = HOST_URL + "artists/" + artist_id 
         tracks_url = artist_url + "/tracks"
         album_url = HOST_URL + "albums/" + album_id 
@@ -194,7 +193,7 @@ class AlbumArtist(Resource):
             abort(404, message="Artist doesn't exist")
         songs = TrackModel.query.filter_by(artist_id=artist_id).all()
         if not songs:
-            abort(200, message="No songs for that artist")
+            return "", 200
         for track in songs:
             track.times_played += 1
         db.session.commit()
@@ -220,7 +219,7 @@ class Track(Resource):
     def get(self, track_id):
         result = TrackModel.query.filter_by(id=track_id).first()
         if not result:
-            abort(404, message="Could not find track with that id...")
+            abort(404, message="Track doesn't exist")
         return result
     
     def put(self, track_id):
@@ -234,7 +233,7 @@ class Track(Resource):
     def delete(self, track_id):
         track = TrackModel.query.filter_by(id=track_id).first()
         if not track:
-            abort(404, message="Could not find track with that id...")
+            abort(404, message="Track doesn't exist")
         db.session.delete(track)
         db.session.commit()
         return "", 204
@@ -244,7 +243,7 @@ class TrackList(Resource):
     def get(self):
         result = TrackModel.query.all()
         if not result:
-            abort(404, message="No tracks")
+            return "", 200
         return result
 
 class TrackArtist(Resource):
@@ -255,7 +254,7 @@ class TrackArtist(Resource):
             abort(404, message="Artist doesn't exist")
         result = TrackModel.query.filter_by(artist_id=artist_id).all()
         if not result:
-            abort(404, message="No tracks for that artist")
+            return "", 200
         return result
 
 class TrackAlbum(Resource):
@@ -266,7 +265,7 @@ class TrackAlbum(Resource):
             abort(404, message="Album doesn't exist")
         result = TrackModel.query.filter_by(album_id=album_id).all()
         if not result:
-            abort(404, message="No tracks for that album")
+            return "", 200
         return result
 
     @marshal_with(track_fields)
@@ -297,7 +296,7 @@ class TrackAlbum(Resource):
             abort(404, message="Album doesn't exist")
         songs = TrackModel.query.filter_by(album_id=album_id).all()
         if not songs:
-            abort(200, message="No songs in that album")
+            return "", 200
         for track in songs:
             track.times_played += 1
         db.session.commit()
