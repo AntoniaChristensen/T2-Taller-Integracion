@@ -39,7 +39,7 @@ class TrackModel(db.Model):
     album_id = db.Column(db.String(22), nullable=False)
     artist_id = db.Column(db.String(22), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
+    duration = db.Column(db.Float, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
     artist = db.Column(db.String(200), nullable=False)
     album = db.Column(db.String(200), nullable=False)
@@ -201,7 +201,7 @@ class AlbumArtist(Resource):
 
 track_post_args = reqparse.RequestParser()
 track_post_args.add_argument("name", type=str, help="Name of the track is required", required=True)
-track_post_args.add_argument("duration", type=int, help="Duration of the track is required", required=True)
+track_post_args.add_argument("duration", type=float, help="Duration of the track is required", required=True)
 
 track_fields = {
     'id': fields.String,
