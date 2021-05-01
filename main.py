@@ -207,7 +207,7 @@ track_fields = {
     'id': fields.String,
     'album_id': fields.String,
     'name': fields.String,
-    'duration': fields.Integer,
+    'duration': fields.Float,
     'times_played': fields.Integer,
     'artist': fields.String,
     'album': fields.String,
