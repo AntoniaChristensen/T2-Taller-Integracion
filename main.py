@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
+from flask_restful import Api, Resource, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 from base64 import b64encode
 
@@ -50,9 +50,10 @@ class TrackModel(db.Model):
 
 #db.create_all()
 
-artist_post_args = reqparse.RequestParser()
-artist_post_args.add_argument("name", type=str, help="Name of the artist is required", required=True)
-artist_post_args.add_argument("age", type=int, help="Age of the artist is required", required=True)
+def non_string(s):
+    if not isinstance(s,str):
+        raise TypeError("Must be a string")
+    return s
 
 artist_fields = {
     'id': fields.String,
@@ -97,7 +98,15 @@ class ArtistList(Resource):
     
     @marshal_with(artist_fields)
     def post(self):
-        args = artist_post_args.parse_args()
+        args = request.get_json()
+        if "name" not in args.keys():
+            abort(400, message="Must include name")
+        if "age" not in args.keys():
+            abort(400, message="Must include age")
+        if not isinstance(args["name"], str):
+            abort(400, message="Name must be a string")
+        if not isinstance(args["age"], int):
+            abort(400, message="Age must be an integer")
         artist_id = b64encode(args['name'].encode()).decode('utf-8')
         if len(artist_id) > 22:
             artist_id = artist_id[0:22]
@@ -111,10 +120,6 @@ class ArtistList(Resource):
         db.session.add(artist)
         db.session.commit()
         return artist, 201
-
-album_post_args = reqparse.RequestParser()
-album_post_args.add_argument("name", type=str, help="Name of the album is required", required=True)
-album_post_args.add_argument("genre", type=str, help="Genre of the album is required", required=True)
 
 album_fields = {
     'id': fields.String,
@@ -170,7 +175,15 @@ class AlbumArtist(Resource):
         artist_exists = ArtistModel.query.filter_by(id=artist_id).first()
         if not artist_exists:
             abort(422, message="Artist doesn't exist")
-        args = album_post_args.parse_args()
+        args = request.get_json()
+        if "name" not in args.keys():
+            abort(400, message="Must include name")
+        if "genre" not in args.keys():
+            abort(400, message="Must include genre")
+        if not isinstance(args["name"], str):
+            abort(400, message="Name must be a string")
+        if not isinstance(args["genre"], str):
+            abort(400, message="Genre must be a string")
         to_encode = args['name'] + ":" + artist_id
         album_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(album_id) > 22:
@@ -198,10 +211,6 @@ class AlbumArtist(Resource):
             track.times_played += 1
         db.session.commit()
         return "", 200
-
-track_post_args = reqparse.RequestParser()
-track_post_args.add_argument("name", type=str, help="Name of the track is required", required=True)
-track_post_args.add_argument("duration", type=float, help="Duration of the track is required", required=True)
 
 track_fields = {
     'id': fields.String,
@@ -273,7 +282,15 @@ class TrackAlbum(Resource):
         album_exists = AlbumModel.query.filter_by(id=album_id).first()
         if not album_exists:
             abort(422, message="Album doesn't exist")
-        args = track_post_args.parse_args()
+        args = request.get_json()
+        if "name" not in args.keys():
+            abort(400, message="Must include name")
+        if "duration" not in args.keys():
+            abort(400, message="Must include duration")
+        if not isinstance(args["name"], str):
+            abort(400, message="Name must be a string")
+        if not isinstance(args["duration"], float):
+            abort(400, message="Duration must be a float")
         to_encode = args['name'] + ":" + album_id
         track_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(track_id) > 22:
