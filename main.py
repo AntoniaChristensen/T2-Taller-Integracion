@@ -93,7 +93,8 @@ class ArtistList(Resource):
     def get(self):
         result = ArtistModel.query.all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
     
     @marshal_with(artist_fields)
