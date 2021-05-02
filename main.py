@@ -157,7 +157,8 @@ class AlbumList(Resource):
     def get(self):
         result = AlbumModel.query.all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
 
 class AlbumArtist(Resource):
@@ -168,7 +169,8 @@ class AlbumArtist(Resource):
             abort(404, message="Artist doesn't exist")
         result = AlbumModel.query.filter_by(artist_id=artist_id).all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
 
     @marshal_with(album_fields)
@@ -253,7 +255,8 @@ class TrackList(Resource):
     def get(self):
         result = TrackModel.query.all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
 
 class TrackArtist(Resource):
@@ -264,7 +267,8 @@ class TrackArtist(Resource):
             abort(404, message="Artist doesn't exist")
         result = TrackModel.query.filter_by(artist_id=artist_id).all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
 
 class TrackAlbum(Resource):
@@ -275,7 +279,8 @@ class TrackAlbum(Resource):
             abort(404, message="Album doesn't exist")
         result = TrackModel.query.filter_by(album_id=album_id).all()
         if not result:
-            return "", 200
+            lista = []
+            return lista, 200
         return result
 
     @marshal_with(track_fields)
